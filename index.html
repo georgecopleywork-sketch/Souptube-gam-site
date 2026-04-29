@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Souptube V3</title>
+
+<style>
+body {
+  margin: 0;
+  overflow: hidden;
+  background: radial-gradient(circle at center, #0b0f2a, #000);
+  font-family: Arial, sans-serif;
+}
+
+/* UI */
+.ui {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+}
+
+button {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.4);
+  color: white;
+  padding: 10px 15px;
+  margin: 5px;
+  cursor: pointer;
+  border-radius: 8px;
+  backdrop-filter: blur(6px);
+  transition: 0.3s;
+}
+
+button:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+/* Floating text */
+.floating-text {
+  position: absolute;
+  color: white;
+  font-size: 22px;
+  opacity: 0;
+  pointer-events: none;
+  animation: floatFade 4s ease forwards;
+}
+
+@keyframes floatFade {
+  0% { opacity: 0; transform: translateY(20px); }
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-40px); }
+}
+
+canvas {
+  display: block;
+}
+</style>
+</head>
+<body>
+
+<div class="ui" id="buttonContainer"></div>
+
+<canvas id="space"></canvas>
+
+<script>
+const canvas = document.getElementById("space");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let mouse = { x: null, y: null };
+
+window.addEventListener("mousemove", e => {
+  mouse.x = e.x;
+  mouse.y = e.y;
+});
+
+/* =========================
+   🔥 CUSTOM BUTTONS
+========================= */
+const buttons = [
+  {
+    text: "YouTube URL Spitter",
+    link: "https://sites.google.com/g.risd.org/tips-for-8thgrade-science-v3/youube"
+  },
+  {
+    text: "GoGuardian Blocker",
+    link: "https://sites.google.com/g.risd.org/tips-for-8thgrade-science-v3/gogardian-boker"
+  }
+];
+
+/* Create buttons */
+const container = document.getElementById("buttonContainer");
+
+buttons.forEach(btn => {
+  const b = document.createElement("button");
+  b.innerText = btn.text;
+
+  // Opens in SAME tab (better for school restrictions)
+  b.onclick = () => {
+    window.location.href = btn.link;
+  };
+
+  container.appendChild(b);
+});
+
+/* =========================
+   STARS SYSTEM
+========================= */
+
+class Star {
+  constructor() {
+    this.reset();
+  }
+
+  reset() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.radius = Math.random() * 2;
+    this.vx = (Math.random() - 0.5) * 0.5;
+    this.vy = (Math.random() - 0.5) * 0.5;
+  }
+
+  update() {
+    if (mouse.x && mouse.y) {
+      let dx = mouse.x - this.x;
+      let dy = mouse.y - this.y;
+      let dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist < 120) {
+        this.x -= dx * 0.01;
+        this.y -= dy * 0.01;
+      }
+    }
+
+    this.x += this.vx;
+    this.y += this.vy;
+
+    if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
+      this.reset();
+    }
+  }
+
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    ctx.fillStyle = "white";
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = "white";
+    ctx.fill();
+  }
+}
+
+let stars = [];
+let STAR_COUNT = 140;
+
+function initStars() {
+  stars = [];
+  for (let i = 0; i < STAR_COUNT; i++) {
+    stars.push(new Star());
+  }
+}
+
+initStars();
+
+function drawLines() {
+  for (let i = 0; i < stars.length; i++) {
+    for (let j = i + 1; j < stars.length; j++) {
+      let dx = stars[i].x - stars[j].x;
+      let dy = stars[i].y - stars[j].y;
+      let dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist < 110) {
+        ctx.beginPath();
+        ctx.moveTo(stars[i].x, stars[i].y);
+        ctx.lineTo(stars[j].x, stars[j].y);
+        ctx.strokeStyle = "rgba(255,255,255," + (1 - dist / 110) + ")";
+        ctx.lineWidth = 0.6;
+        ctx.stroke();
+      }
+    }
+  }
+}
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  stars.forEach(s => {
+    s.update();
+    s.draw();
+  });
+
+  drawLines();
+  requestAnimationFrame(animate);
+}
+
+animate();
+
+/* =========================
+   FLOATING TEXT
+========================= */
+
+const phrases = ["this Site So fire", "amaze"];
+
+function spawnText() {
+  const el = document.createElement("div");
+  el.className = "floating-text";
+  el.innerText = phrases[Math.floor(Math.random() * phrases.length)];
+
+  el.style.left = Math.random() * window.innerWidth + "px";
+  el.style.top = Math.random() * window.innerHeight + "px";
+
+  document.body.appendChild(el);
+
+  setTimeout(() => el.remove(), 4000);
+}
+
+setInterval(spawnText, 3000);
+
+/* Resize fix */
+window.addEventListener("resize", () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+</script>
+
+</body>
+</html>
