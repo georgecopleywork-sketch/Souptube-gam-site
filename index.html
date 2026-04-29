@@ -8,43 +8,61 @@
 body {
   margin: 0;
   overflow: hidden;
-  background: radial-gradient(circle at center, #0b0f2a, #000);
   font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #0b0f2a, #02040f);
+  color: white;
 }
 
-/* UI */
-.ui {
+/* CENTER CONTENT */
+.center {
   position: absolute;
-  top: 20px;
-  left: 20px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
   z-index: 10;
-  display: flex;
-  flex-direction: column;
+}
+
+/* TITLE */
+.title {
+  font-size: 64px;
+  font-weight: bold;
+  text-shadow: 0 0 20px rgba(255,255,255,0.8);
+}
+
+/* SUBTEXT */
+.subtitle {
+  opacity: 0.6;
+  margin-bottom: 20px;
+}
+
+/* BUTTONS */
+.buttons {
+  margin-top: 20px;
 }
 
 button {
   background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.4);
+  border: 1px solid rgba(255,255,255,0.3);
   color: white;
-  padding: 10px 15px;
-  margin: 5px;
+  padding: 12px 18px;
+  margin: 8px;
   cursor: pointer;
-  border-radius: 8px;
-  backdrop-filter: blur(6px);
+  border-radius: 10px;
+  backdrop-filter: blur(8px);
   transition: 0.3s;
+  font-size: 14px;
 }
 
 button:hover {
-  background: rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.25);
 }
 
-/* Floating text */
+/* FLOAT TEXT */
 .floating-text {
   position: absolute;
-  color: white;
-  font-size: 22px;
+  font-size: 20px;
   opacity: 0;
-  pointer-events: none;
   animation: floatFade 4s ease forwards;
 }
 
@@ -62,7 +80,21 @@ canvas {
 </head>
 <body>
 
-<div class="ui" id="buttonContainer"></div>
+<!-- CENTER UI -->
+<div class="center">
+  <div class="title">Souptube V3</div>
+  <div class="subtitle">ily &lt;3</div>
+
+  <div class="buttons">
+    <button onclick="go('https://sites.google.com/g.risd.org/tips-for-8thgrade-science-v3/youube')">
+      YouTube URL Spitter
+    </button>
+
+    <button onclick="go('https://sites.google.com/g.risd.org/tips-for-8thgrade-science-v3/gogardian-boker')">
+      GoGuardian Blocker
+    </button>
+  </div>
+</div>
 
 <canvas id="space"></canvas>
 
@@ -79,39 +111,6 @@ window.addEventListener("mousemove", e => {
   mouse.x = e.x;
   mouse.y = e.y;
 });
-
-/* =========================
-   🔥 CUSTOM BUTTONS
-========================= */
-const buttons = [
-  {
-    text: "YouTube URL Spitter",
-    link: "https://sites.google.com/g.risd.org/tips-for-8thgrade-science-v3/youube"
-  },
-  {
-    text: "GoGuardian Blocker",
-    link: "https://sites.google.com/g.risd.org/tips-for-8thgrade-science-v3/gogardian-boker"
-  }
-];
-
-/* Create buttons */
-const container = document.getElementById("buttonContainer");
-
-buttons.forEach(btn => {
-  const b = document.createElement("button");
-  b.innerText = btn.text;
-
-  // Opens in SAME tab (better for school restrictions)
-  b.onclick = () => {
-    window.location.href = btn.link;
-  };
-
-  container.appendChild(b);
-});
-
-/* =========================
-   STARS SYSTEM
-========================= */
 
 class Star {
   constructor() {
@@ -157,16 +156,9 @@ class Star {
 }
 
 let stars = [];
-let STAR_COUNT = 140;
-
-function initStars() {
-  stars = [];
-  for (let i = 0; i < STAR_COUNT; i++) {
-    stars.push(new Star());
-  }
+for (let i = 0; i < 140; i++) {
+  stars.push(new Star());
 }
-
-initStars();
 
 function drawLines() {
   for (let i = 0; i < stars.length; i++) {
@@ -180,7 +172,6 @@ function drawLines() {
         ctx.moveTo(stars[i].x, stars[i].y);
         ctx.lineTo(stars[j].x, stars[j].y);
         ctx.strokeStyle = "rgba(255,255,255," + (1 - dist / 110) + ")";
-        ctx.lineWidth = 0.6;
         ctx.stroke();
       }
     }
@@ -201,10 +192,12 @@ function animate() {
 
 animate();
 
-/* =========================
-   FLOATING TEXT
-========================= */
+/* NAVIGATION */
+function go(link) {
+  window.location.href = link;
+}
 
+/* FLOAT TEXT */
 const phrases = ["this Site So fire", "amaze"];
 
 function spawnText() {
@@ -222,7 +215,7 @@ function spawnText() {
 
 setInterval(spawnText, 3000);
 
-/* Resize fix */
+/* Resize */
 window.addEventListener("resize", () => {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
