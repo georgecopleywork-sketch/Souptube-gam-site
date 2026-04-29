@@ -7,219 +7,85 @@
 <style>
 body {
   margin: 0;
-  overflow: hidden;
   font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #0b0f2a, #02040f);
+  background: radial-gradient(circle at center, #0b0f2a, #02040f);
+  overflow: hidden;
   color: white;
 }
 
-/* CENTER CONTENT */
+/* FAKE STAR BACKGROUND (CSS instead of canvas) */
+.stars {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background:
+    radial-gradient(2px 2px at 20% 30%, white, transparent),
+    radial-gradient(2px 2px at 70% 60%, white, transparent),
+    radial-gradient(1px 1px at 40% 80%, white, transparent),
+    radial-gradient(2px 2px at 90% 20%, white, transparent);
+  background-size: 200px 200px;
+  animation: moveStars 60s linear infinite;
+  opacity: 0.6;
+}
+
+@keyframes moveStars {
+  from { transform: translateY(0); }
+  to { transform: translateY(-200px); }
+}
+
+/* CENTER UI */
 .center {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
-  z-index: 10;
 }
 
 /* TITLE */
 .title {
-  font-size: 64px;
-  font-weight: bold;
-  text-shadow: 0 0 20px rgba(255,255,255,0.8);
-}
-
-/* SUBTEXT */
-.subtitle {
-  opacity: 0.6;
-  margin-bottom: 20px;
+  font-size: 60px;
+  text-shadow: 0 0 20px white;
 }
 
 /* BUTTONS */
-.buttons {
-  margin-top: 20px;
-}
-
 button {
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.3);
-  color: white;
-  padding: 12px 18px;
-  margin: 8px;
-  cursor: pointer;
+  margin: 10px;
+  padding: 12px 20px;
   border-radius: 10px;
-  backdrop-filter: blur(8px);
-  transition: 0.3s;
-  font-size: 14px;
+  border: 1px solid rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.1);
+  color: white;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
 }
 
 button:hover {
-  background: rgba(255,255,255,0.25);
-}
-
-/* FLOAT TEXT */
-.floating-text {
-  position: absolute;
-  font-size: 20px;
-  opacity: 0;
-  animation: floatFade 4s ease forwards;
-}
-
-@keyframes floatFade {
-  0% { opacity: 0; transform: translateY(20px); }
-  20% { opacity: 1; }
-  80% { opacity: 1; }
-  100% { opacity: 0; transform: translateY(-40px); }
-}
-
-canvas {
-  display: block;
+  background: rgba(255,255,255,0.3);
 }
 </style>
 </head>
+
 <body>
 
-<!-- CENTER UI -->
+<div class="stars"></div>
+
 <div class="center">
   <div class="title">Souptube V3</div>
-  <div class="subtitle">ily &lt;3</div>
 
-  <div class="buttons">
-    <button onclick="go('https://sites.google.com/g.risd.org/tips-for-8thgrade-science-v3/youube')">
-      YouTube URL Spitter
-    </button>
+  <button onclick="go('https://sites.google.com/g.risd.org/tips-for-8thgrade-science-v3/youube')">
+    YouTube URL Spitter
+  </button>
 
-    <button onclick="go('https://sites.google.com/g.risd.org/tips-for-8thgrade-science-v3/gogardian-boker')">
-      GoGuardian Blocker
-    </button>
-  </div>
+  <button onclick="go('https://sites.google.com/g.risd.org/tips-for-8thgrade-science-v3/gogardian-boker')">
+    GoGuardian Blocker
+  </button>
 </div>
 
-<canvas id="space"></canvas>
-
 <script>
-const canvas = document.getElementById("space");
-const ctx = canvas.getContext("2d");
-
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-let mouse = { x: null, y: null };
-
-window.addEventListener("mousemove", e => {
-  mouse.x = e.x;
-  mouse.y = e.y;
-});
-
-class Star {
-  constructor() {
-    this.reset();
-  }
-
-  reset() {
-    this.x = Math.random() * canvas.width;
-    this.y = Math.random() * canvas.height;
-    this.radius = Math.random() * 2;
-    this.vx = (Math.random() - 0.5) * 0.5;
-    this.vy = (Math.random() - 0.5) * 0.5;
-  }
-
-  update() {
-    if (mouse.x && mouse.y) {
-      let dx = mouse.x - this.x;
-      let dy = mouse.y - this.y;
-      let dist = Math.sqrt(dx * dx + dy * dy);
-
-      if (dist < 120) {
-        this.x -= dx * 0.01;
-        this.y -= dy * 0.01;
-      }
-    }
-
-    this.x += this.vx;
-    this.y += this.vy;
-
-    if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
-      this.reset();
-    }
-  }
-
-  draw() {
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-    ctx.fillStyle = "white";
-    ctx.shadowBlur = 10;
-    ctx.shadowColor = "white";
-    ctx.fill();
-  }
-}
-
-let stars = [];
-for (let i = 0; i < 140; i++) {
-  stars.push(new Star());
-}
-
-function drawLines() {
-  for (let i = 0; i < stars.length; i++) {
-    for (let j = i + 1; j < stars.length; j++) {
-      let dx = stars[i].x - stars[j].x;
-      let dy = stars[i].y - stars[j].y;
-      let dist = Math.sqrt(dx * dx + dy * dy);
-
-      if (dist < 110) {
-        ctx.beginPath();
-        ctx.moveTo(stars[i].x, stars[i].y);
-        ctx.lineTo(stars[j].x, stars[j].y);
-        ctx.strokeStyle = "rgba(255,255,255," + (1 - dist / 110) + ")";
-        ctx.stroke();
-      }
-    }
-  }
-}
-
-function animate() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  stars.forEach(s => {
-    s.update();
-    s.draw();
-  });
-
-  drawLines();
-  requestAnimationFrame(animate);
-}
-
-animate();
-
-/* NAVIGATION */
 function go(link) {
-  window.location.href = link;
+  window.top.location.href = link;
 }
-
-/* FLOAT TEXT */
-const phrases = ["this Site So fire", "amaze"];
-
-function spawnText() {
-  const el = document.createElement("div");
-  el.className = "floating-text";
-  el.innerText = phrases[Math.floor(Math.random() * phrases.length)];
-
-  el.style.left = Math.random() * window.innerWidth + "px";
-  el.style.top = Math.random() * window.innerHeight + "px";
-
-  document.body.appendChild(el);
-
-  setTimeout(() => el.remove(), 4000);
-}
-
-setInterval(spawnText, 3000);
-
-/* Resize */
-window.addEventListener("resize", () => {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-});
 </script>
 
 </body>
