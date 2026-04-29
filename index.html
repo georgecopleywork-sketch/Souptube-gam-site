@@ -1,66 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Souptube V3</title>
-
-<style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #02040f;
-  color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
-
-/* CENTER BOX */
-.container {
-  text-align: center;
-}
-
-/* TITLE */
-.title {
-  font-size: 60px;
-  margin-bottom: 20px;
-}
-
-/* BUTTONS */
-button {
-  display: block;
-  margin: 10px auto;
-  padding: 12px 20px;
-  border-radius: 10px;
-  border: none;
-  background: #111;
-  color: white;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-button:hover {
-  background: #333;
-}
-</style>
+  <meta charset="UTF-8">
+  <title>Souptube V3</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<div class="container">
-  <div class="title">Souptube V3</div>
+<div class="background"></div>
 
-  <button onclick="go('https://google.com')">
-    Test Button
-  </button>
+<!-- Sidebar -->
+<div class="sidebar">
+  <button onclick="go('index.html')">🏠</button>
+  <button onclick="go('apps.html')">📦</button>
 </div>
 
-<script>
-function go(link) {
-  window.location.href = link;
-}
-</script>
+<!-- Main -->
+<div class="center">
+  <h1>Souptube V3</h1>
+  <p>ily &lt;3</p>
 
+  <input class="search" placeholder="search anything...">
+
+  <div class="buttons">
+    <button onclick="go('apps.html')">Apps</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
